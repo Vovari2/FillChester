@@ -10,21 +10,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 public enum StoreType {
-    BARREL (MiniMessage.miniMessage().deserialize("<!italic><#EF6400>Бочка"), new ItemStack(Material.BARREL, 1)),
-    CHEST (MiniMessage.miniMessage().deserialize("<!italic><#EF6400>Сундук"), new ItemStack(Material.CHEST, 1)),
-    DOUBLE_CHEST (MiniMessage.miniMessage().deserialize("<!italic><#EF6400>Двойной сундук"), new ItemStack(Material.CHEST, 2));
+    BARREL (MiniMessage.miniMessage().deserialize("<hover:show_text:'<#EF6400>Бочка'><#EF6400>Б</hover>")),
+    CHEST (MiniMessage.miniMessage().deserialize("<hover:show_text:'<#EF6400>Сундук'><#EF6400>С</hover>")),
+    DOUBLE_CHEST (MiniMessage.miniMessage().deserialize("<hover:show_text:'<#EF6400>Двойной сундук'><#EF6400>ДС</hover>"));
 
-    private final ItemStack item;
     private final Component title;
-    public ItemStack getItem(){
-        return item;
-    }
     public Component getTitle() {
         return title;
     }
 
-    StoreType(Component title, ItemStack item){
-        this.item = item;
+    StoreType(Component title){
         this.title = title;
     }
 

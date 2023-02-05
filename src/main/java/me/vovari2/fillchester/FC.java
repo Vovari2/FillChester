@@ -30,7 +30,6 @@ public final class FC extends JavaPlugin {
     public static List<FCChest> chests;
     public static HashMap<String, FCPoint> openNewChests;
     public static HashMap<String, FCPoint> openChests;
-    public static HashMap<String, Integer> openLists;
 
     public static ImmutableList<String> listAmountSlots;
 
@@ -45,9 +44,7 @@ public final class FC extends JavaPlugin {
         chests = new ArrayList<>();
         openNewChests = new HashMap<>();
         openChests = new HashMap<>();
-        openLists = new HashMap<>();
         StoreType.setContainers();
-        ItemUtils.setItems();
 
         listAmountSlots = ImmutableList.of("9", "18", "27", "36", "45", "54");
         commandManager.getCommandCompletions().registerCompletion("amount_slots", c -> listAmountSlots);
@@ -61,35 +58,19 @@ public final class FC extends JavaPlugin {
     public static boolean isListPage(int page) {
         if (page <= 0)
             return false;
-        return chests.size() >= (page - 1) * 45 + 1;
+        return chests.size() >= (page - 1) * 10 + 1;
     }
 
-    public static FCInventory getListInventory(Player player, int page){
-        int chestOnPage = page * 45;
-        FCInventory inventory = FCInventory.at(player, "Хранилища - <Страница " + page + ">", 54);
+    public static void getListInventory(Player player, int page){
+        Component text = MiniMessage.miniMessage().deserialize("<yellow> Список хранилищ - <aqua>" + page + "<yellow>:\n");
 
-        ItemStack[] itemStacks = inventory.getStore();
-        for (int i = 0; i < 45 && i < chests.size(); i++){
-            FCChest chest = chests.get((page - 1) * 45 + i);
-            itemStacks[i] = chest.getStoreType().getItem();
-            ItemMeta itemMeta = itemStacks[i].getItemMeta();
-            itemMeta.displayName(chest.getStoreType().getTitle());
+        int chestOnPage = page * 10;
+        for (int i = (page-1) * 10; i < chestOnPage && i < chests.size(); i++){
+            FCChest chest = chests.get(i);
             FCPoint point = chest.getPoints().get(0);
-            List<Component> lore = new ArrayList<>();
-            lore.add(MiniMessage.miniMessage().deserialize("<!italic><#FD9800>Название: <#FDD500>" + chest.defaultInventory.getTitle()));
-            lore.add(MiniMessage.miniMessage().deserialize("<!italic><#FD9800>Координаты: <#FDD500>" + point.getX() + " " + point.getY() + " " + point.getZ()));
-            lore.add(Component.text(""));
-            lore.add(MiniMessage.miniMessage().deserialize("<!italic><#AAAAAA>[ЛКМ] - Открыть сундук по умолчанию"));
-            lore.add(MiniMessage.miniMessage().deserialize("<!italic><#AAAAAA>[ПКМ] - Телепортироваться к сундуку"));
-            itemMeta.lore(lore);
-            itemStacks[i].setItemMeta(itemMeta);
+            text.append(MiniMessage.miniMessage().deserialize("<yellow> " + (i+1) + ". " + chest.getStoreType().getTitle() + " <#f48a00>" + chest.defaultInventory.getTitle() + " <#ef6400>| <#f8af00>" + point.getX() + " " + point.getY() + " " + point.getZ() + " <#fdd500>" + TextUtils.getButtonTP(i) + " " + TextUtils.getButtonEdit(i) + " " + TextUtils.getButtonOpen(i, player.getName()) + "\n"));
         }
-        for (int i = 46; i < 53; i++)
-            itemStacks[i] = ItemUtils.getBackground();
-        itemStacks[45] = ItemUtils.getLastPage();
-        itemStacks[53] = ItemUtils.getNextPage();
-        inventory.setStore(itemStacks);
-        return inventory;
+        player.sendMessage(text);
     }
 
     // Нахождение основной части сундука

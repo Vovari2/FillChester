@@ -14,30 +14,6 @@ import org.bukkit.event.player.PlayerInteractEvent;
 public class FCListener implements Listener {
 
     @EventHandler
-    public void onInteracteInventory(InventoryClickEvent event){
-        if (!FC.openLists.containsKey(event.getWhoClicked().getName().toLowerCase()))
-            return;
-
-        event.setCancelled(true);
-
-        if (!event.getClickedInventory().equals(event.getInventory())){
-            return;
-        }
-
-        Player player = (Player) event.getWhoClicked();
-
-        // Левый клик
-        if (event.getAction().equals(InventoryAction.PICKUP_ALL)){
-
-        }
-        // Правый клик
-        else if (event.getAction().equals(InventoryAction.PICKUP_HALF)){
-
-        } 
-
-    }
-
-    @EventHandler
     public void onOpenChest(PlayerInteractEvent event){
         if (!event.getPlayer().hasPermission("fillchester.blacklist")) {
             // Проверка, нажали ли правой кнопкой мыши по блоку

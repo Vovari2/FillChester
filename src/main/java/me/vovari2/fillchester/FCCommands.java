@@ -116,9 +116,7 @@ public class FCCommands extends BaseCommand {
             TextUtils.sendPlayerErrorMessage(player, "Страницы хранилищ с таким номером не существует!");
             return;
         }
-        FCInventory inventory = FC.getListInventory(player, page);
-        player.openInventory(inventory.getMCInventory());
-        FC.openLists.put(player.getName().toLowerCase(), page);
+        FC.getListInventory(player, page);
     }
 
     @Subcommand("list")
@@ -127,9 +125,7 @@ public class FCCommands extends BaseCommand {
             TextUtils.sendPlayerErrorMessage(player, "Не создано ни одного хранилища!");
             return;
         }
-        FCInventory inventory = FC.getListInventory(player, 1);
-        player.openInventory(inventory.getMCInventory());
-        FC.openLists.put(player.getName().toLowerCase(), 1);
+        FC.getListInventory(player, 1);
     }
 
 

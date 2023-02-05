@@ -1,0 +1,7 @@
+name: FillChester
+version: '${project.version}'
+main: me.vovari2.fillchester.FC
+api-version: 1.19
+commands:
+  fillchester:
+

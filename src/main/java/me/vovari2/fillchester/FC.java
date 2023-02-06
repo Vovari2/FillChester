@@ -2,17 +2,10 @@ package me.vovari2.fillchester;
 
 import co.aikar.commands.*;
 import com.google.common.collect.ImmutableList;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.TextColor;
-import net.kyori.adventure.text.minimessage.MiniMessage;
-import org.bukkit.Material;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.type.Chest;
 import org.bukkit.entity.Player;
-import org.bukkit.event.inventory.InventoryType;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.ArrayList;
@@ -56,21 +49,19 @@ public final class FC extends JavaPlugin {
     }
 
     public static boolean isListPage(int page) {
-        if (page <= 0)
-            return false;
-        return chests.size() >= (page - 1) * 10 + 1;
+        return page <= 0 || chests.size() < (page - 1) * 10 + 1;
     }
 
     public static void getListInventory(Player player, int page){
-        Component text = MiniMessage.miniMessage().deserialize("<yellow> Список хранилищ - <aqua>" + page + "<yellow>:\n");
+        String text = "<#0075ff>С<#007dff>п<#0084ff>и<#008cff>с<#0093fe>о<#009bfe>к <#00a2fe>х<#00aafe>р<#00b2fe>а<#00b9fe>н<#00c1fe>и<#00c8fd>л<#00d0fd>и<#00d7fd>щ <#00dffd>- <#0075ff>С<#007cff>т<#0082ff>р<#0089fe>а<#0090fe>н<#0096fe>и<#009dfe>ц<#00a4fd>а <#00aafd>" + page + "<#00b1fd>:\n";
 
         int chestOnPage = page * 10;
         for (int i = (page-1) * 10; i < chestOnPage && i < chests.size(); i++){
             FCChest chest = chests.get(i);
             FCPoint point = chest.getPoints().get(0);
-            text.append(MiniMessage.miniMessage().deserialize("<yellow> " + (i+1) + ". " + chest.getStoreType().getTitle() + " <#f48a00>" + chest.defaultInventory.getTitle() + " <#ef6400>| <#f8af00>" + point.getX() + " " + point.getY() + " " + point.getZ() + " <#fdd500>" + TextUtils.getButtonTP(i) + " " + TextUtils.getButtonEdit(i) + " " + TextUtils.getButtonOpen(i, player.getName()) + "\n"));
+            text += "<#00B1FD> " + (i+1) + ". <#EF6400>[" + chest.getStoreType().getTitle() + "] <#f48a00>\"" + chest.getDefaultInventory().getTitle() + "\" <#f8af00>" + point.getX() + " " + point.getY() + " " + point.getZ() + " <#fdd500>" + TextUtils.getButtonTP(i+1) + " " + TextUtils.getButtonEdit(i+1) + " " + TextUtils.getButtonOpen(i+1, player.getName()) + "\n";
         }
-        player.sendMessage(text);
+        TextUtils.sendPlayerMessage(player, text);
     }
 
     // Нахождение основной части сундука
@@ -80,6 +71,17 @@ public final class FC extends JavaPlugin {
                 if (pos.equals(point))
                     return chest;
         return null;
+    }
+    public static FCChest getChest(int number){
+        try{
+            return chests.get(number);
+        }
+        catch(Exception error){
+            return null;
+        }
+    }
+    public static int getNumberChest(FCChest chest){
+        return chests.indexOf(chest);
     }
 
     // Получение второй части сундука

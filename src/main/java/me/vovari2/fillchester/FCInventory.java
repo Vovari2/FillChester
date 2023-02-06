@@ -1,6 +1,5 @@
 package me.vovari2.fillchester;
 
-import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
@@ -44,7 +43,7 @@ public class FCInventory {
     }
 
     public static FCInventory at(FCInventory inventory){
-        return new FCInventory(inventory.holder, inventory.getTitle(), inventory.store.length);
+        return new FCInventory(inventory.holder, inventory.getTitle(), inventory.store.length, inventory.store);
     }
     public static FCInventory at(InventoryHolder holder, String title, int size){
         return new FCInventory(holder, title, size);

@@ -61,11 +61,13 @@ public class FCCommands extends BaseCommand {
         }
 
         FCChest chest = FC.getChest(point);
-        player.openInventory(chest.defaultInventory.addTitle(" (По умолчанию)").getMCInventory());
+        player.openInventory(chest.getDefaultInventory().addTitle(" (По умолчанию)").getMCInventory());
         FC.openNewChests.put(player.getName().toLowerCase(), FCPoint.adapt(block.getLocation()));
     }
 
+
     @Subcommand("edit")
+    @CommandCompletion("@nothing")
     public void edit(Player player){
         Block block = player.getTargetBlock(null, 10);
         // Проверка, является ли блок контейнером
@@ -81,17 +83,146 @@ public class FCCommands extends BaseCommand {
             return;
         }
 
-        player.openInventory(chest.defaultInventory.addTitle(" (По умолчанию)").getMCInventory());
+        player.openInventory(chest.getDefaultInventory().addTitle(" (По умолчанию)").getMCInventory());
         FC.openNewChests.put(player.getName().toLowerCase(), FCPoint.adapt(block.getLocation()));
     }
+    @Subcommand("edit")
+    @CommandCompletion("@nothing")
+    public void edit(Player player, int number){
+        FCChest chest = FC.getChest(number - 1);
+        // Проверка, является ли блок контейнером
+        if (chest == null){
+            TextUtils.sendPlayerErrorMessage(player, "Хранилища с таким номером не существует!");
+            return;
+        }
+
+        if (!chest.isWork) {
+            TextUtils.sendPlayerErrorMessage(player, "Хранилище с таким номером выключено!");
+            return;
+        }
+
+        player.openInventory(chest.getDefaultInventory().addTitle(" (По умолчанию)").getMCInventory());
+        FC.openNewChests.put(player.getName().toLowerCase(), chest.getPoints().get(0));
+    }
+
+
+    @Subcommand("tp")
+    @CommandCompletion("@nothing")
+    public void teleport(Player player, int number){
+        FCChest chest = FC.getChest(number - 1);
+        // Проверка, является ли блок контейнером
+        if (chest == null){
+            TextUtils.sendPlayerErrorMessage(player, "Хранилища с таким номером не существует!");
+            return;
+        }
+        player.teleport(chest.getPoints().get(0).getLocation().add(0.5F, 0, 0.5F));
+    }
+
 
     @Subcommand("open")
+    @CommandCompletion("@nothing")
+    public void open(Player player, int number){
+        FCChest chest = FC.getChest(number - 1);
+        // Проверка, является ли блок контейнером
+        if (chest == null){
+            TextUtils.sendPlayerErrorMessage(player, "Хранилища с таким номером не существует!");
+            return;
+        }
+
+        if (!chest.isWork) {
+            TextUtils.sendPlayerErrorMessage(player, "Хранилище с таким номером выключено!");
+            return;
+        }
+
+        String playerName = player.getName().toLowerCase();
+        if (!chest.contains(playerName)){
+            TextUtils.sendPlayerErrorMessage(player, "Указанный игрок ещё не открывал это хранилище!");
+            return;
+        }
+
+        player.openInventory(chest.getPlayerInventory(playerName));
+        FC.openChests.put(playerName, chest.getPoints().get(0));
+    }
+    @Subcommand("open")
     @CommandCompletion("@players")
-    public void open(Player player, Player targetPlayer){
+    public void open(Player player, int number, Player targetPlayer){
+        FCChest chest = FC.getChest(number - 1);
+        // Проверка, является ли блок контейнером
+        if (chest == null){
+            TextUtils.sendPlayerErrorMessage(player, "Хранилища с таким номером не существует!");
+            return;
+        }
+
+        if (!chest.isWork) {
+            TextUtils.sendPlayerErrorMessage(player, "Хранилище с таким номером выключено!");
+            return;
+        }
+
+        String playerName = targetPlayer.getName().toLowerCase();
+        if (!chest.contains(playerName)){
+            TextUtils.sendPlayerErrorMessage(player, "Указанный игрок ещё не открывал это хранилище!");
+            return;
+        }
+
+        player.openInventory(chest.getPlayerInventory(playerName));
+        FC.openChests.put(player.getName().toLowerCase(), chest.getPoints().get(0));
+    }
+
+
+    @Subcommand("list")
+    public void list(Player player, int page){
+        if (FC.isListPage(page)){
+            TextUtils.sendPlayerErrorMessage(player, "Страницы хранилищ с таким номером не существует!");
+            return;
+        }
+        FC.getListInventory(player, page);
+    }
+    @Subcommand("list")
+    public void list(Player player){
+        if (FC.isListPage(1)){
+            TextUtils.sendPlayerErrorMessage(player, "Не создано ни одного хранилища!");
+            return;
+        }
+        FC.getListInventory(player, 1);
+    }
+
+
+    @Subcommand("info")
+    public void info(Player player){
         Block block = player.getTargetBlock(null, 10);
         // Проверка, является ли блок контейнером
         if (!StoreType.getMaterials().contains(block.getType())){
-            TextUtils.sendPlayerErrorMessage(player, "Чтобы изменить содежимое хранилища игрока, нужно навестить на сундук или бочку!");
+            TextUtils.sendPlayerErrorMessage(player, "Чтобы изменить заполнение хранилища, нужно навестить на сундук или бочку!");
+            return;
+        }
+
+        FCChest chest = FC.getChest(FCPoint.adapt(block.getLocation()));
+        // Проверка, является ли блок сундуком плагина
+        if (chest == null){
+            TextUtils.sendPlayerErrorMessage(player, "Блок не является сундуком, созданным плагином FillChester!");
+            return;
+        }
+        int number = FC.getNumberChest(chest) + 1;
+        TextUtils.sendInfoStore(player, chest, number);
+    }
+    @Subcommand("info")
+    public void info(Player player, int number){
+        FCChest chest = FC.getChest(number - 1);
+        // Проверка, является ли блок контейнером
+        if (chest == null){
+            TextUtils.sendPlayerErrorMessage(player, "Хранилища с таким номером не существует!");
+            return;
+        }
+        TextUtils.sendInfoStore(player, chest, number);
+    }
+
+
+    @Subcommand("delete")
+    public void delete(Player player){
+        Block block = player.getTargetBlock(null, 10);
+        // Проверка, является ли блок контейнером
+        if (!StoreType.getMaterials().contains(block.getType())){
+            TextUtils.sendPlayerErrorMessage(player, "Чтобы изменить заполнение хранилища, нужно навестить на сундук или бочку!");
             return;
         }
 
@@ -102,30 +233,53 @@ public class FCCommands extends BaseCommand {
             return;
         }
 
-        String playerName = targetPlayer.getName().toLowerCase();
-
-        if (chest.contains(playerName)){
-            player.openInventory(chest.getPlayerInventory(playerName));
-            FC.openChests.put(player.getName().toLowerCase(), FCPoint.adapt(block.getLocation()));
-        }
+        FC.chests.remove(FC.getNumberChest(chest));
+        TextUtils.sendPlayerMessage(player, "<green>Хранилище удалено");
     }
-
-    @Subcommand("list")
-    public void list(Player player, int page){
-        if (!FC.isListPage(page)){
-            TextUtils.sendPlayerErrorMessage(player, "Страницы хранилищ с таким номером не существует!");
+    @Subcommand("delete")
+    public void delete(Player player, int number){
+        FCChest chest = FC.getChest(number - 1);
+        // Проверка, является ли блок контейнером
+        if (chest == null){
+            TextUtils.sendPlayerErrorMessage(player, "Хранилища с таким номером не существует!");
             return;
         }
-        FC.getListInventory(player, page);
+
+        FC.chests.remove(FC.getNumberChest(chest));
+        TextUtils.sendPlayerMessage(player, "<green>Хранилище удалено");
     }
 
-    @Subcommand("list")
-    public void list2(Player player){
-        if (!FC.isListPage(1)){
-            TextUtils.sendPlayerErrorMessage(player, "Не создано ни одного хранилища!");
+
+    @Subcommand("clear")
+    public void clear(Player player){
+        Block block = player.getTargetBlock(null, 10);
+        // Проверка, является ли блок контейнером
+        if (!StoreType.getMaterials().contains(block.getType())){
+            TextUtils.sendPlayerErrorMessage(player, "Чтобы изменить заполнение хранилища, нужно навестить на сундук или бочку!");
             return;
         }
-        FC.getListInventory(player, 1);
+
+        FCChest chest = FC.getChest(FCPoint.adapt(block.getLocation()));
+        // Проверка, является ли блок сундуком плагина
+        if (chest == null){
+            TextUtils.sendPlayerErrorMessage(player, "Блок не является сундуком, созданным плагином FillChester!");
+            return;
+        }
+
+        chest.clearPlayerInventory();
+        TextUtils.sendPlayerMessage(player, "<green>Содержимое всех хранилищ игроков пересоздано по умолчанию");
+    }
+    @Subcommand("clear")
+    public void clear(Player player, int number){
+        FCChest chest = FC.getChest(number - 1);
+        // Проверка, является ли блок контейнером
+        if (chest == null){
+            TextUtils.sendPlayerErrorMessage(player, "Хранилища с таким номером не существует!");
+            return;
+        }
+
+        chest.clearPlayerInventory();
+        TextUtils.sendPlayerMessage(player, "<green>Содержимое всех хранилищ игроков пересоздано по умолчанию");
     }
 
 

@@ -38,6 +38,9 @@ public class FCInventory {
     public ItemStack[] getStore(){
         return store;
     }
+    public InventoryHolder getHolder(){
+        return holder;
+    }
     public void setStore(ItemStack[] store){
         this.store = store;
     }

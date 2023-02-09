@@ -28,7 +28,10 @@ public class TextUtils {
     public static void sendPlayerMessage(Player player, String message){
         player.sendMessage(MiniMessage.miniMessage().deserialize(message));
     }
-    public static void sendConsoleMessage(CommandSender sender, String message){
-        sender.sendMessage(MiniMessage.miniMessage().deserialize(message));
+    public static void sendConsoleMessage(String message){
+        FC.getInstance().getLogger().info(message);
+    }
+    public static void sendWarningConsoleMessage(String message){
+        FC.getInstance().getLogger().warning(message);
     }
 }

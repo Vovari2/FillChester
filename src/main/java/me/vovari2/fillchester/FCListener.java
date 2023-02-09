@@ -38,10 +38,10 @@ public class FCListener implements Listener {
             }
 
             if (chest.contains(playerName))
-                player.openInventory(chest.getPlayerInventory(playerName));
+                player.openInventory(chest.getPlayerInventory(playerName).getMCInventory());
             else {
                 chest.addPlayerInventory(playerName);
-                player.openInventory(chest.getPlayerInventory(playerName));
+                player.openInventory(chest.getPlayerInventory(playerName).getMCInventory());
             }
             ((Lidded) event.getClickedBlock().getState()).open();
             FC.openChests.put(player.getName().toLowerCase(), FCPoint.adapt(event.getClickedBlock().getLocation()));

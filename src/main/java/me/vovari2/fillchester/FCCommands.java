@@ -47,16 +47,16 @@ public class FCCommands extends BaseCommand {
                 points.add(point);
                 points.add(FC.pointSecondChest(point, blockChest));
 
-                FC.chests.add(new FCChest(points, title, player, size, StoreType.DOUBLE_CHEST));
+                FC.stores.add(new FCChest(points, title, player, size, StoreType.DOUBLE_CHEST));
                 TextUtils.sendPlayerMessage(player, "<green>Новый настраиваемый двойной сундук создан!");
             }
             else{
-                FC.chests.add(new FCChest(point, title, player, size, StoreType.CHEST));
+                FC.stores.add(new FCChest(point, title, player, size, StoreType.CHEST));
                 TextUtils.sendPlayerMessage(player, "<green>Новый настраиваемый сундук создан!");
             }
         }
         else if (block.getBlockData() instanceof Barrel blockBarrel){
-            FC.chests.add(new FCChest(point, title, player, size, StoreType.BARREL));
+            FC.stores.add(new FCChest(point, title, player, size, StoreType.BARREL));
             TextUtils.sendPlayerMessage(player, "<green>Новая настраиваемая бочка создана!");
         }
 
@@ -140,7 +140,7 @@ public class FCCommands extends BaseCommand {
             return;
         }
 
-        player.openInventory(chest.getPlayerInventory(playerName));
+        player.openInventory(chest.getPlayerInventory(playerName).getMCInventory());
         FC.openChests.put(playerName, chest.getPoints().get(0));
     }
     @Subcommand("open")
@@ -164,7 +164,7 @@ public class FCCommands extends BaseCommand {
             return;
         }
 
-        player.openInventory(chest.getPlayerInventory(playerName));
+        player.openInventory(chest.getPlayerInventory(playerName).getMCInventory());
         FC.openChests.put(player.getName().toLowerCase(), chest.getPoints().get(0));
     }
 
@@ -233,7 +233,7 @@ public class FCCommands extends BaseCommand {
             return;
         }
 
-        FC.chests.remove(FC.getNumberChest(chest));
+        FC.stores.remove(FC.getNumberChest(chest));
         TextUtils.sendPlayerMessage(player, "<green>Хранилище удалено");
     }
     @Subcommand("delete")
@@ -245,7 +245,7 @@ public class FCCommands extends BaseCommand {
             return;
         }
 
-        FC.chests.remove(FC.getNumberChest(chest));
+        FC.stores.remove(FC.getNumberChest(chest));
         TextUtils.sendPlayerMessage(player, "<green>Хранилище удалено");
     }
 
@@ -280,6 +280,17 @@ public class FCCommands extends BaseCommand {
 
         chest.clearPlayerInventory();
         TextUtils.sendPlayerMessage(player, "<green>Содержимое всех хранилищ игроков пересоздано по умолчанию");
+    }
+
+    @Subcommand("load")
+    public void load(Player player){
+        ConfigUtils.loadStores();
+        TextUtils.sendPlayerMessage(player, "<green>Все хранилища загружены");
+    }
+    @Subcommand("save")
+    public void save(Player player){
+        ConfigUtils.saveStores();
+        TextUtils.sendPlayerMessage(player, "<green>Все хранилища сохранены");
     }
 
 

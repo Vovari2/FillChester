@@ -45,11 +45,14 @@ public class FCChest {
     public void addPlayerInventory(String playerName){
         playerInventories.put(playerName, FCInventory.at(defaultInventory));
     }
-    public Inventory getPlayerInventory(String playerName){
-        return playerInventories.get(playerName).getMCInventory();
+    public FCInventory getPlayerInventory(String playerName){
+        return playerInventories.get(playerName);
     }
     public void setPlayerInventory(String playerName, Inventory inventory){
         playerInventories.put(playerName, FCInventory.adapt(defaultInventory.getTitle(), inventory));
+    }
+    public HashMap<String, FCInventory> getPlayersInventory(){
+        return playerInventories;
     }
     public void clearPlayerInventory(){
         playerInventories.clear();

@@ -20,7 +20,7 @@ public class FCListener implements Listener {
 
             Block block = event.getClickedBlock();
             // Проверка, является ли нажатый блок хранилищем
-            if (block == null || !StoreType.getMaterials().contains(block.getType()))
+            if (block == null || !FC.materialContainers.contains(block.getType()))
                 return;
 
             FCChest chest = FC.getChest(FCPoint.adapt(block.getLocation()));
@@ -38,10 +38,10 @@ public class FCListener implements Listener {
             }
 
             if (chest.contains(playerName))
-                player.openInventory(chest.getPlayerInventory(playerName).getMCInventory());
+                player.openInventory(chest.getPlayerInventory(playerName).getMCInventory(player));
             else {
                 chest.addPlayerInventory(playerName);
-                player.openInventory(chest.getPlayerInventory(playerName).getMCInventory());
+                player.openInventory(chest.getPlayerInventory(playerName).getMCInventory(player));
             }
             ((Lidded) event.getClickedBlock().getState()).open();
             FC.openChests.put(player.getName().toLowerCase(), FCPoint.adapt(event.getClickedBlock().getLocation()));

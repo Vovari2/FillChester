@@ -1,9 +1,8 @@
 package me.vovari2.fillchester;
 
 import org.bukkit.Material;
-
-import java.util.ArrayList;
-import java.util.List;
+import org.bukkit.block.Block;
+import org.bukkit.block.data.type.Chest;
 
 public enum StoreType {
     BARREL ("<hover:show_text:'<#EF6400>Бочка'>Б</hover>"),
@@ -15,17 +14,15 @@ public enum StoreType {
         return title;
     }
 
-    StoreType(String title){
+    StoreType( String title){
         this.title = title;
     }
 
-    private static List<Material> containers;
-    public static List<Material> getMaterials(){
-        return containers;
-    }
-    public static void setContainers(){
-        containers = new ArrayList<>();
-        containers.add(Material.CHEST);
-        containers.add(Material.BARREL);
+    public static boolean equals(Block block, StoreType type){
+        if (block.getType().equals(Material.CHEST))
+            if (type.equals(StoreType.DOUBLE_CHEST) && !((Chest)block.getBlockData()).getType().equals(Chest.Type.SINGLE))
+                return true;
+            else return type.equals(StoreType.CHEST) && ((Chest) block.getBlockData()).getType().equals(Chest.Type.SINGLE);
+        else return block.getType().equals(Material.BARREL) && type.equals(StoreType.BARREL);
     }
 }

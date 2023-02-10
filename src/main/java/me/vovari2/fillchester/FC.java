@@ -2,11 +2,11 @@ package me.vovari2.fillchester;
 
 import co.aikar.commands.*;
 import com.google.common.collect.ImmutableList;
+import org.bukkit.Material;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.type.Chest;
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -23,11 +23,12 @@ public final class FC extends JavaPlugin {
         return plugin;
     }
 
-    public static List<FCChest> stores;
-    public static HashMap<String, FCPoint> openNewChests;
-    public static HashMap<String, FCPoint> openChests;
+    public static List<FCChest> stores; // List stores
+    public static HashMap<String, FCPoint> openNewChests; // List of open inventories
+    public static HashMap<String, FCPoint> openChests; // List of open inventories
 
-    public static ImmutableList<String> listAmountSlots;
+    public static ImmutableList<Integer> amountSlots = ImmutableList.of(9, 18, 27, 36, 45, 54);
+    public static ImmutableList<Material> materialContainers = ImmutableList.of(Material.CHEST, Material.BARREL);
 
     @Override
     public void onEnable() {
@@ -38,21 +39,30 @@ public final class FC extends JavaPlugin {
         if (!new File(getDataFolder(), "stores.yml").exists())
             saveResource("stores.yml", false);
 
-
         getServer().getPluginManager().registerEvents(new FCListener(), this);
 
         stores = new ArrayList<>();
         openNewChests = new HashMap<>();
         openChests = new HashMap<>();
-        StoreType.setContainers();
 
-        listAmountSlots = ImmutableList.of("9", "18", "27", "36", "45", "54");
-        commandManager.getCommandCompletions().registerCompletion("amount_slots", c -> listAmountSlots);
+        ConfigUtils.loadStores();
     }
 
     @Override
     public void onDisable() {
-        // Plugin shutdown logic
+        ConfigUtils.saveStores();
+    }
+
+    public static void reload(Player player){
+        ConfigUtils.saveStores();
+        if (!new File(plugin.getDataFolder(), "stores.yml").exists())
+            plugin.saveResource("stores.yml", false);
+
+        stores = new ArrayList<>();
+        openNewChests = new HashMap<>();
+        openChests = new HashMap<>();
+
+        ConfigUtils.loadStores();
     }
 
     public static boolean isListPage(int page) {

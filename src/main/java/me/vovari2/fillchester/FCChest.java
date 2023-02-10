@@ -1,6 +1,5 @@
 package me.vovari2.fillchester;
 
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 
 import java.util.ArrayList;
@@ -61,19 +60,27 @@ public class FCChest {
         return playerInventories.containsKey(playerName);
     }
 
-    public FCChest(FCPoint point, String title, Player player, int size, StoreType typeStore) {
+    public FCChest(FCPoint point, String title, int size, StoreType typeStore) {
         isWork = false;
         points = new ArrayList<>();
         points.add(point);
-        defaultInventory = FCInventory.at(player, title, size);
+        defaultInventory = FCInventory.at(title, size);
         playerInventories = new HashMap<>();
         this.typeStore = typeStore;
     }
-    public FCChest(List<FCPoint> points, String title, Player player, int size, StoreType typeStore){
+    public FCChest(List<FCPoint> points, String title, int size, StoreType typeStore){
         isWork = false;
         this.points = points;
-        defaultInventory = FCInventory.at(player, title, size);
+        defaultInventory = FCInventory.at(title, size);
         playerInventories = new HashMap<>();
         this.typeStore = typeStore;
+    }
+
+    public FCChest(List<FCPoint> points, StoreType typeStore, FCInventory defaultInventory, HashMap<String, FCInventory> playerInventories){
+        this.points = points;
+        this.defaultInventory = defaultInventory;
+        this.playerInventories = playerInventories;
+        this.typeStore = typeStore;
+        isWork = true;
     }
 }

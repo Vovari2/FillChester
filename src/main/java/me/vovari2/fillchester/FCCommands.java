@@ -2,15 +2,11 @@ package me.vovari2.fillchester;
 
 import co.aikar.commands.BaseCommand;
 import co.aikar.commands.annotation.*;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.type.Barrel;
 import org.bukkit.block.data.type.Chest;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,7 +20,7 @@ public class FCCommands extends BaseCommand {
     public void create(Player player, int size, String title) {
         Block block = player.getTargetBlock(null, 10);
         // Проверка, является ли блок контейнером
-        if (!StoreType.getMaterials().contains(block.getType())){
+        if (!FC.materialContainers.contains(block.getType())){
             TextUtils.sendPlayerErrorMessage(player, "Чтобы создать новое хранилище, нужно навестить на сундук или бочку!");
             return;
         }
@@ -35,7 +31,7 @@ public class FCCommands extends BaseCommand {
             return;
         }
 
-        if (!FC.listAmountSlots.contains(String.valueOf(size))){
+        if (!FC.amountSlots.contains(size)){
             TextUtils.sendPlayerErrorMessage(player, "Нельзя задавать такое количество слотов!\n Можно указывать только: 9, 18, 27, 36, 45 и 54");
             return;
         }
@@ -47,21 +43,21 @@ public class FCCommands extends BaseCommand {
                 points.add(point);
                 points.add(FC.pointSecondChest(point, blockChest));
 
-                FC.stores.add(new FCChest(points, title, player, size, StoreType.DOUBLE_CHEST));
+                FC.stores.add(new FCChest(points, title, size, StoreType.DOUBLE_CHEST));
                 TextUtils.sendPlayerMessage(player, "<green>Новый настраиваемый двойной сундук создан!");
             }
             else{
-                FC.stores.add(new FCChest(point, title, player, size, StoreType.CHEST));
+                FC.stores.add(new FCChest(point, title, size, StoreType.CHEST));
                 TextUtils.sendPlayerMessage(player, "<green>Новый настраиваемый сундук создан!");
             }
         }
-        else if (block.getBlockData() instanceof Barrel blockBarrel){
-            FC.stores.add(new FCChest(point, title, player, size, StoreType.BARREL));
+        else if (block.getBlockData() instanceof Barrel){
+            FC.stores.add(new FCChest(point, title, size, StoreType.BARREL));
             TextUtils.sendPlayerMessage(player, "<green>Новая настраиваемая бочка создана!");
         }
 
         FCChest chest = FC.getChest(point);
-        player.openInventory(chest.getDefaultInventory().addTitle(" (По умолчанию)").getMCInventory());
+        player.openInventory(chest.getDefaultInventory().addTitle(" (По умолчанию)").getMCInventory(player));
         FC.openNewChests.put(player.getName().toLowerCase(), FCPoint.adapt(block.getLocation()));
     }
 
@@ -71,7 +67,7 @@ public class FCCommands extends BaseCommand {
     public void edit(Player player){
         Block block = player.getTargetBlock(null, 10);
         // Проверка, является ли блок контейнером
-        if (!StoreType.getMaterials().contains(block.getType())){
+        if (!FC.materialContainers.contains(block.getType())){
             TextUtils.sendPlayerErrorMessage(player, "Чтобы изменить заполнение хранилища, нужно навестить на сундук или бочку!");
             return;
         }
@@ -83,7 +79,7 @@ public class FCCommands extends BaseCommand {
             return;
         }
 
-        player.openInventory(chest.getDefaultInventory().addTitle(" (По умолчанию)").getMCInventory());
+        player.openInventory(chest.getDefaultInventory().addTitle(" (По умолчанию)").getMCInventory(player));
         FC.openNewChests.put(player.getName().toLowerCase(), FCPoint.adapt(block.getLocation()));
     }
     @Subcommand("edit")
@@ -101,7 +97,7 @@ public class FCCommands extends BaseCommand {
             return;
         }
 
-        player.openInventory(chest.getDefaultInventory().addTitle(" (По умолчанию)").getMCInventory());
+        player.openInventory(chest.getDefaultInventory().addTitle(" (По умолчанию)").getMCInventory(player));
         FC.openNewChests.put(player.getName().toLowerCase(), chest.getPoints().get(0));
     }
 
@@ -120,7 +116,6 @@ public class FCCommands extends BaseCommand {
 
 
     @Subcommand("open")
-    @CommandCompletion("@nothing")
     public void open(Player player, int number){
         FCChest chest = FC.getChest(number - 1);
         // Проверка, является ли блок контейнером
@@ -140,7 +135,7 @@ public class FCCommands extends BaseCommand {
             return;
         }
 
-        player.openInventory(chest.getPlayerInventory(playerName).getMCInventory());
+        player.openInventory(chest.getPlayerInventory(playerName).getMCInventory(player));
         FC.openChests.put(playerName, chest.getPoints().get(0));
     }
     @Subcommand("open")
@@ -164,7 +159,7 @@ public class FCCommands extends BaseCommand {
             return;
         }
 
-        player.openInventory(chest.getPlayerInventory(playerName).getMCInventory());
+        player.openInventory(chest.getPlayerInventory(playerName).getMCInventory(player));
         FC.openChests.put(player.getName().toLowerCase(), chest.getPoints().get(0));
     }
 
@@ -191,7 +186,7 @@ public class FCCommands extends BaseCommand {
     public void info(Player player){
         Block block = player.getTargetBlock(null, 10);
         // Проверка, является ли блок контейнером
-        if (!StoreType.getMaterials().contains(block.getType())){
+        if (!FC.materialContainers.contains(block.getType())){
             TextUtils.sendPlayerErrorMessage(player, "Чтобы изменить заполнение хранилища, нужно навестить на сундук или бочку!");
             return;
         }
@@ -221,7 +216,7 @@ public class FCCommands extends BaseCommand {
     public void delete(Player player){
         Block block = player.getTargetBlock(null, 10);
         // Проверка, является ли блок контейнером
-        if (!StoreType.getMaterials().contains(block.getType())){
+        if (!FC.materialContainers.contains(block.getType())){
             TextUtils.sendPlayerErrorMessage(player, "Чтобы изменить заполнение хранилища, нужно навестить на сундук или бочку!");
             return;
         }
@@ -254,7 +249,7 @@ public class FCCommands extends BaseCommand {
     public void clear(Player player){
         Block block = player.getTargetBlock(null, 10);
         // Проверка, является ли блок контейнером
-        if (!StoreType.getMaterials().contains(block.getType())){
+        if (!FC.materialContainers.contains(block.getType())){
             TextUtils.sendPlayerErrorMessage(player, "Чтобы изменить заполнение хранилища, нужно навестить на сундук или бочку!");
             return;
         }
@@ -292,20 +287,17 @@ public class FCCommands extends BaseCommand {
         ConfigUtils.saveStores();
         TextUtils.sendPlayerMessage(player, "<green>Все хранилища сохранены");
     }
+    @Subcommand("reload")
+    public void reload(Player player){
+        FC.reload(player);
+        TextUtils.sendPlayerMessage(player, "<green>Плагин перезагружен");
+    }
 
 
     @Subcommand("help")
     @Default
     public void help(Player player){
-        ItemStack itemStack = new ItemStack(Material.PAPER);
-        ItemMeta itemMeta = itemStack.getItemMeta();
-        itemMeta.setCustomModelData(1);
-        itemMeta.displayName(MiniMessage.miniMessage().deserialize("<!italic><#c16800>Л<#d07800>е<#df8800>й<#ee9700>к<#ee9700>а"));
-        List<Component> lore = new ArrayList<>();
-        lore.add(MiniMessage.miniMessage().deserialize("<!italic>ꈁ<#f98600> 1/20"));
-        itemMeta.lore(lore);
-        itemStack.setItemMeta(itemMeta);
-        player.getInventory().addItem(itemStack);
+
     }
 
     @CatchUnknown

@@ -49,7 +49,7 @@ public class ConfigUtils {
             section = config.getConfigurationSection(path + "players");
             if (section != null)
                 for(String playerName : section.getKeys(false))
-                    playerInventories.put(playerName, FCInventory.at(title, size, loadInventory(config, path + "." + playerName, size)));
+                    playerInventories.put(playerName, FCInventory.at(title, size, loadInventory(config, path + "players." + playerName, size)));
 
 
             Block block = points.get(0).getWorld().getBlockAt(points.get(0).getLocation());

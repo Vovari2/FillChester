@@ -44,16 +44,16 @@ public class FCCommands extends BaseCommand {
                 points.add(FC.pointSecondChest(point, blockChest));
 
                 FC.stores.add(new FCChest(points, title, size, StoreType.DOUBLE_CHEST));
-                TextUtils.sendPlayerMessage(player, "<green>Новый настраиваемый двойной сундук создан!");
+                TextUtils.sendPlayerMessage(player, "<green>Новый настраиваемый двойной сундук создан!\n");
             }
             else{
                 FC.stores.add(new FCChest(point, title, size, StoreType.CHEST));
-                TextUtils.sendPlayerMessage(player, "<green>Новый настраиваемый сундук создан!");
+                TextUtils.sendPlayerMessage(player, "<green>Новый настраиваемый сундук создан!\n");
             }
         }
         else if (block.getBlockData() instanceof Barrel){
             FC.stores.add(new FCChest(point, title, size, StoreType.BARREL));
-            TextUtils.sendPlayerMessage(player, "<green>Новая настраиваемая бочка создана!");
+            TextUtils.sendPlayerMessage(player, "<green>Новая настраиваемая бочка создана!\n");
         }
 
         FCChest chest = FC.getChest(point);
@@ -229,7 +229,7 @@ public class FCCommands extends BaseCommand {
         }
 
         FC.stores.remove(FC.getNumberChest(chest));
-        TextUtils.sendPlayerMessage(player, "<green>Хранилище удалено");
+        TextUtils.sendPlayerMessage(player, "<green>Хранилище удалено\n");
     }
     @Subcommand("delete")
     public void delete(Player player, int number){
@@ -241,7 +241,7 @@ public class FCCommands extends BaseCommand {
         }
 
         FC.stores.remove(FC.getNumberChest(chest));
-        TextUtils.sendPlayerMessage(player, "<green>Хранилище удалено");
+        TextUtils.sendPlayerMessage(player, "<green>Хранилище удалено\n");
     }
 
 
@@ -262,7 +262,7 @@ public class FCCommands extends BaseCommand {
         }
 
         chest.clearPlayerInventory();
-        TextUtils.sendPlayerMessage(player, "<green>Содержимое всех хранилищ игроков пересоздано по умолчанию");
+        TextUtils.sendPlayerMessage(player, "<green>Содержимое всех хранилищ игроков пересоздано по умолчанию\n");
     }
     @Subcommand("clear")
     public void clear(Player player, int number){
@@ -274,30 +274,46 @@ public class FCCommands extends BaseCommand {
         }
 
         chest.clearPlayerInventory();
-        TextUtils.sendPlayerMessage(player, "<green>Содержимое всех хранилищ игроков пересоздано по умолчанию");
+        TextUtils.sendPlayerMessage(player, "<green>Содержимое всех хранилищ игроков пересоздано по умолчанию\n");
     }
+
 
     @Subcommand("load")
     public void load(Player player){
         ConfigUtils.loadStores();
-        TextUtils.sendPlayerMessage(player, "<green>Все хранилища загружены");
+        TextUtils.sendPlayerMessage(player, "<green>Все хранилища загружены\n");
     }
     @Subcommand("save")
     public void save(Player player){
         ConfigUtils.saveStores();
-        TextUtils.sendPlayerMessage(player, "<green>Все хранилища сохранены");
+        TextUtils.sendPlayerMessage(player, "<green>Все хранилища сохранены\n");
     }
     @Subcommand("reload")
     public void reload(Player player){
-        FC.reload(player);
-        TextUtils.sendPlayerMessage(player, "<green>Плагин перезагружен");
+        FC.reload();
+        TextUtils.sendPlayerMessage(player, "<green>Плагин перезагружен\n");
     }
 
 
     @Subcommand("help")
     @Default
     public void help(Player player){
-
+        TextUtils.sendPlayerMessage(player, """
+                        <#0075ff>П<#007cff>о<#0083ff>м<#008aff>о<#0091fe>щ<#0098fe>ь <#009ffe>п<#00a6fe>о <#00adfe>п<#00b4fe>л<#00bbfe>а<#00c2fd>г<#00c9fd>и<#00d0fd>н<#00d7fd>у (/fc help): 
+                         <hover:show_text:'<gray>Создает новое хранилище с заданным количеством слотов и названием хранилища (нужно навестить на сундук, бочку или двойной сундук)'><#EF6400>/fc create</hover> <#f48a00>[Кол-во слотов*] <#f8af00>[Название хранилища*]
+                         <hover:show_text:'<gray>Показывает список хранилищ определенной страницы (по умолчанию страница 1)'><#EF6400>/fc list</hover> <#f48a00>[Страница]
+                         <hover:show_text:'<gray>Телепортирует игрока к хранилищу с указанным номером'><#EF6400>/fc tp</hover> <#f48a00>[Номер хранилища*]
+                         <hover:show_text:'<gray>Открывает инвентарь по умолчанию по номеру хранилища или если навестить на хранилище'><#EF6400>/fc edit</hover> <#f48a00>[Номер хранилища]
+                         <hover:show_text:'<gray>Открывает инвентарь игрока по номеру и нику игрока'><#EF6400>/fc open</hover> <#f48a00>[Номер хранилища*] <#f8af00>[Ник игрока]
+                         <hover:show_text:'<gray>Удаляет хранилище по номеру или если навестись на него'><#EF6400>/fc delete</hover> <#f48a00>[Номер хранилища]
+                         <hover:show_text:'<gray>Очищает инвентари игроков в хранилище по номеру или если навестись на него'><#EF6400>/fc clear</hover> <#f48a00>[Номер хранилища]
+                         <hover:show_text:'<gray>Показывает информацию о хранилище по номеру или если навестись на него'><#EF6400>/fc info</hover> <#f48a00>[Номер хранилища]
+                         
+                         <hover:show_text:'<gray>Загружает все хранилища из файла на сервер'><#EF6400>/fc load</hover>
+                         <hover:show_text:'<gray>Сохраняет все хранилища в файл с сервера'><#EF6400>/fc save</hover>
+                         <hover:show_text:'<gray>Перезагружает плагин'><#EF6400>/fc reload</hover>
+                        """
+                );
     }
 
     @CatchUnknown

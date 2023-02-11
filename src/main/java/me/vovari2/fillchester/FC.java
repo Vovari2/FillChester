@@ -6,7 +6,6 @@ import org.bukkit.Material;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.type.Chest;
-import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -53,7 +52,7 @@ public final class FC extends JavaPlugin {
         ConfigUtils.saveStores();
     }
 
-    public static void reload(Player player){
+    public static void reload(){
         ConfigUtils.saveStores();
         if (!new File(plugin.getDataFolder(), "stores.yml").exists())
             plugin.saveResource("stores.yml", false);

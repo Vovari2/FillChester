@@ -9,6 +9,7 @@ import org.bukkit.inventory.ItemStack;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -76,6 +77,7 @@ public class ConfigUtils {
             saveInventory(config, path + "default", chest.getDefaultInventory().getStore());
             for (String player : chest.getPlayersInventory().keySet())
                 saveInventory(config, path + "players." + player, chest.getPlayerInventory(player).getStore());
+
         }
         try{
             config.save(file);
@@ -89,7 +91,7 @@ public class ConfigUtils {
     private static ItemStack[] loadInventory(FileConfiguration config, String path, int size){
         ItemStack[] itemStacks = new ItemStack[size];
         ConfigurationSection section = config.getConfigurationSection(path);
-        if (section == null)
+        if (section == null || config.get(path) == "Пусто")
             return itemStacks;
 
         for (String slot : section.getKeys(false)){
@@ -100,8 +102,11 @@ public class ConfigUtils {
     }
     private static void saveInventory(FileConfiguration config, String path, ItemStack[] itemStacks){
         int size = itemStacks.length;
-        for (int i = 0; i < size; i++)
-            if (itemStacks[i] != null)
-                config.set(path + ".slot_" + i, itemStacks[i]);
+        if (!Arrays.equals(itemStacks, new ItemStack[size])){
+            for (int i = 0; i < size; i++)
+                if (itemStacks[i] != null)
+                    config.set(path + ".slot_" + i, itemStacks[i]);
+        }
+        else config.set(path, "Пусто");
     }
 }

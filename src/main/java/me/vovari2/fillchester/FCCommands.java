@@ -351,6 +351,7 @@ public class FCCommands extends BaseCommand {
                          <hover:show_text:'<gray>Очищает инвентари игроков в хранилище по номеру или если навестись на него'><#EF6400>/fc clear</hover> <#f48a00>[Номер хранилища]
                          <hover:show_text:'<gray>Показывает информацию о хранилище по номеру или если навестись на него'><#EF6400>/fc info</hover> <#f48a00>[Номер хранилища]
                          
+                         <hover:show_text:'<gray>Команды ниже следует использовать только, если вы на 100% знаете, как они работают'><#EF6400><red>Предупреждение!</red></hover>  
                          <hover:show_text:'<gray>Загружает все хранилища из файла на сервер'><#EF6400>/fc load</hover>
                          <hover:show_text:'<gray>Сохраняет все хранилища в файл с сервера'><#EF6400>/fc save</hover>
                          <hover:show_text:'<gray>Перезагружает плагин'><#EF6400>/fc reload</hover>

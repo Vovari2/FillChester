@@ -37,6 +37,7 @@ public class FCCommands extends BaseCommand {
         }
 
         FCPoint point = FCPoint.adapt(block.getLocation());
+        title = TextUtils.removeLegacyColorString(title);
         if (block.getBlockData() instanceof Chest blockChest){
             if (block.getType().equals(Material.CHEST) && !blockChest.getType().equals(Chest.Type.SINGLE)){
                 List<FCPoint> points = new ArrayList<>();
@@ -57,7 +58,7 @@ public class FCCommands extends BaseCommand {
         }
 
         FCChest chest = FC.getChest(point);
-        player.openInventory(chest.getDefaultInventory().addTitle(" (По умолчанию)").getMCInventory(player));
+        player.openInventory(chest.getDefaultInventory().getMCInventory(player, chest.getTitle() + " (По умолчанию)"));
         FC.openNewChests.put(player.getName().toLowerCase(), FCPoint.adapt(block.getLocation()));
     }
 
@@ -79,7 +80,7 @@ public class FCCommands extends BaseCommand {
             return;
         }
 
-        player.openInventory(chest.getDefaultInventory().addTitle(" (По умолчанию)").getMCInventory(player));
+        player.openInventory(chest.getDefaultInventory().getMCInventory(player, chest.getTitle() + " (По умолчанию)"));
         FC.openNewChests.put(player.getName().toLowerCase(), FCPoint.adapt(block.getLocation()));
     }
     @Subcommand("edit")
@@ -97,8 +98,49 @@ public class FCCommands extends BaseCommand {
             return;
         }
 
-        player.openInventory(chest.getDefaultInventory().addTitle(" (По умолчанию)").getMCInventory(player));
+        player.openInventory(chest.getDefaultInventory().getMCInventory(player, chest.getTitle() + " (По умолчанию)"));
         FC.openNewChests.put(player.getName().toLowerCase(), chest.getPoints().get(0));
+    }
+
+
+    @Subcommand("edit title")
+    @CommandCompletion("@nothing")
+    public void edit_title(Player player, String title){
+        Block block = player.getTargetBlock(null, 10);
+        // Проверка, является ли блок контейнером
+        if (!FC.materialContainers.contains(block.getType())){
+            TextUtils.sendPlayerErrorMessage(player, "Чтобы изменить название хранилища, нужно навестить на сундук или бочку!");
+            return;
+        }
+
+        FCChest chest = FC.getChest(FCPoint.adapt(block.getLocation()));
+        // Проверка, является ли блок сундуком плагина
+        if (chest == null){
+            TextUtils.sendPlayerErrorMessage(player, "Блок не является сундуком, созданным плагином FillChester!");
+            return;
+        }
+
+        chest.setTitle(TextUtils.removeLegacyColorString(title));
+        TextUtils.sendPlayerMessage(player, "<green>Название хранилища изменено\n");
+    }
+    @Subcommand("edit title")
+    @CommandCompletion("@nothing")
+    public void edit_title(Player player, int number, String title){
+        FCChest chest = FC.getChest(number - 1);
+        // Проверка, является ли блок контейнером
+        if (chest == null){
+            TextUtils.sendPlayerErrorMessage(player, "Хранилища с таким номером не существует!");
+            return;
+        }
+
+        if (!chest.isWork) {
+            TextUtils.sendPlayerErrorMessage(player, "Хранилище с таким номером выключено!");
+            return;
+        }
+
+
+        chest.setTitle(TextUtils.removeLegacyColorString(title));
+        TextUtils.sendPlayerMessage(player, "<green>Название хранилища изменено\n");
     }
 
 
@@ -135,7 +177,7 @@ public class FCCommands extends BaseCommand {
             return;
         }
 
-        player.openInventory(chest.getPlayerInventory(playerName).getMCInventory(player));
+        player.openInventory(chest.getPlayerInventory(playerName).getMCInventory(player, chest.getTitle()));
         FC.openChests.put(playerName, chest.getPoints().get(0));
     }
     @Subcommand("open")
@@ -159,7 +201,7 @@ public class FCCommands extends BaseCommand {
             return;
         }
 
-        player.openInventory(chest.getPlayerInventory(playerName).getMCInventory(player));
+        player.openInventory(chest.getPlayerInventory(playerName).getMCInventory(player, chest.getTitle()));
         FC.openChests.put(player.getName().toLowerCase(), chest.getPoints().get(0));
     }
 
@@ -320,4 +362,5 @@ public class FCCommands extends BaseCommand {
     public void unknown(){
         FC.getInstance().getLogger().info("Work4!");
     }
+
 }

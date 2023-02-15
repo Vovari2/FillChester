@@ -74,7 +74,7 @@ public final class FC extends JavaPlugin {
         for (int i = (page-1) * 10; i < chestOnPage && i < stores.size(); i++){
             FCChest chest = stores.get(i);
             FCPoint point = chest.getPoints().get(0);
-            text += "<#00B1FD> " + (i+1) + ". <#EF6400>[" + chest.getStoreType().getTitle() + "] <#f48a00>\"" + chest.getDefaultInventory().getTitle() + "\" <#f8af00>" + point.getX() + " " + point.getY() + " " + point.getZ() + " <#fdd500>" + TextUtils.getButtonTP(i+1) + " " + TextUtils.getButtonEdit(i+1) + " " + TextUtils.getButtonOpen(i+1, player.getName()) + "\n";
+            text += "<#00B1FD> " + (i+1) + ". <#EF6400>[" + chest.getStoreType().getTitle() + "] <#f48a00>\"" + chest.getTitle() + "\" <#f8af00>" + point.getX() + " " + point.getY() + " " + point.getZ() + " <#fdd500>" + TextUtils.getButtonTP(i+1) + " " + TextUtils.getButtonEdit(i+1) + " " + TextUtils.getButtonOpen(i+1, player.getName()) + "\n";
         }
         TextUtils.sendPlayerMessage(player, text);
     }

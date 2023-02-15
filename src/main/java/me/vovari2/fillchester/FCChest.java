@@ -9,6 +9,7 @@ import java.util.List;
 public class FCChest {
     public boolean isWork;
     private final StoreType typeStore;
+    private String title;
     private final List<FCPoint> points;
     private FCInventory defaultInventory;
     private final HashMap<String, FCInventory> playerInventories;
@@ -34,11 +35,17 @@ public class FCChest {
         return this.typeStore;
     }
 
+    public String getTitle(){
+        return title;
+    }
+    public void setTitle(String title){
+        this.title = title;
+    }
     public FCInventory getDefaultInventory(){
         return defaultInventory;
     }
     public void setDefaultInventory(Inventory inventory){
-        defaultInventory = FCInventory.adapt(defaultInventory.getTitle(), inventory);
+        defaultInventory = FCInventory.adapt(inventory);
     }
 
     public void addPlayerInventory(String playerName){
@@ -48,7 +55,7 @@ public class FCChest {
         return playerInventories.get(playerName);
     }
     public void setPlayerInventory(String playerName, Inventory inventory){
-        playerInventories.put(playerName, FCInventory.adapt(defaultInventory.getTitle(), inventory));
+        playerInventories.put(playerName, FCInventory.adapt(inventory));
     }
     public HashMap<String, FCInventory> getPlayersInventory(){
         return playerInventories;
@@ -64,20 +71,23 @@ public class FCChest {
         isWork = false;
         points = new ArrayList<>();
         points.add(point);
-        defaultInventory = FCInventory.at(title, size);
+        this.title = title;
+        defaultInventory = FCInventory.at(size);
         playerInventories = new HashMap<>();
         this.typeStore = typeStore;
     }
     public FCChest(List<FCPoint> points, String title, int size, StoreType typeStore){
         isWork = false;
         this.points = points;
-        defaultInventory = FCInventory.at(title, size);
+        this.title = title;
+        defaultInventory = FCInventory.at(size);
         playerInventories = new HashMap<>();
         this.typeStore = typeStore;
     }
 
-    public FCChest(List<FCPoint> points, StoreType typeStore, FCInventory defaultInventory, HashMap<String, FCInventory> playerInventories){
+    public FCChest(List<FCPoint> points, String title, StoreType typeStore, FCInventory defaultInventory, HashMap<String, FCInventory> playerInventories){
         this.points = points;
+        this.title = title;
         this.defaultInventory = defaultInventory;
         this.playerInventories = playerInventories;
         this.typeStore = typeStore;

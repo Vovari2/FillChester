@@ -40,21 +40,21 @@ public class ConfigUtils {
 
             // Init values store
             StoreType type = StoreType.valueOf(config.getString(path + "type"));
-            String title = config.getString(path + "title");
+            String title = TextUtils.removeLegacyColorString(config.getString(path + "title"));
             int size = config.getInt(path + "size");
 
-            FCInventory defaultInventory = FCInventory.at(title, size, loadInventory(config, path + "default", size));
+            FCInventory defaultInventory = FCInventory.at(size, loadInventory(config, path + "default", size));
 
             HashMap<String, FCInventory> playerInventories = new HashMap<>();
             section = config.getConfigurationSection(path + "players");
             if (section != null)
                 for(String playerName : section.getKeys(false))
-                    playerInventories.put(playerName, FCInventory.at(title, size, loadInventory(config, path + "players." + playerName, size)));
+                    playerInventories.put(playerName, FCInventory.at(size, loadInventory(config, path + "players." + playerName, size)));
 
 
             Block block = points.get(0).getWorld().getBlockAt(points.get(0).getLocation());
             if (StoreType.equals(block, type))
-                FC.stores.add(new FCChest(points, type, defaultInventory, playerInventories));
+                FC.stores.add(new FCChest(points, title, type, defaultInventory, playerInventories));
             else TextUtils.sendWarningConsoleMessage("Не обнаружен блок хранилища " + type + " на координатах " + points.get(0).getString());
         }
     }
@@ -71,7 +71,7 @@ public class ConfigUtils {
                 path = "stores." + chest.getPoints().get(0).getString() + "/" + chest.getPoints().get(1).getString() + ".";
             else path = "stores." + chest.getPoints().get(0).getString() + ".";
             config.set(path + "type", chest.getStoreType().toString());
-            config.set(path + "title", chest.getDefaultInventory().getTitle());
+            config.set(path + "title", chest.getTitle());
             config.set(path + "size", chest.getDefaultInventory().getStore().length);
             saveInventory(config, path + "default", chest.getDefaultInventory().getStore());
             for (String player : chest.getPlayersInventory().keySet())

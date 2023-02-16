@@ -1,15 +1,32 @@
 package me.vovari2.fillchester;
 
+import com.destroystokyo.paper.event.block.BlockDestroyEvent;
 import org.bukkit.block.Block;
 import org.bukkit.block.Lidded;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 
 public class FCListener implements Listener {
+
+    @EventHandler
+    public void onChestDestroy(BlockBreakEvent event){
+        Block block = event.getBlock();
+        // Проверка, является ли нажатый блок хранилищем
+        if (!FC.materialContainers.contains(block.getType()))
+            return;
+
+        FCChest chest = FC.getChest(FCPoint.adapt(block.getLocation()));
+        // Проверка, является ли блок сундуками плагина
+        if (chest == null)
+            return;
+
+        event.setCancelled(true);
+    }
 
     @EventHandler
     public void onOpenChest(PlayerInteractEvent event){

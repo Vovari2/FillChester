@@ -67,6 +67,12 @@ public class FCChest {
         return playerInventories.containsKey(playerName);
     }
 
+    public void editSizeAllInventories(int size){
+        defaultInventory.editSize(size);
+        for (FCInventory playerInventory : playerInventories.values())
+            playerInventory.editSize(size);
+    }
+
     public FCChest(FCPoint point, String title, int size, StoreType typeStore) {
         isWork = false;
         points = new ArrayList<>();

@@ -1,7 +1,5 @@
 package me.vovari2.fillchester;
 
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
@@ -20,12 +18,19 @@ public class FCInventory {
     }
 
     public Inventory getMCInventory(Player player, String title){
-        Inventory inventory = Bukkit.createInventory(player, store.length, MiniMessage.miniMessage().deserialize(title));
+        Inventory inventory = Bukkit.createInventory(player, store.length, title);
         inventory.setContents(store.clone());
         return inventory;
     }
     public ItemStack[] getStore() {
         return store;
+    }
+
+    public void editSize(int size){
+        ItemStack[] newItemStack = new ItemStack[size];
+        for (int i = 0; i < size && i < store.length; i++)
+            newItemStack[i] = store[i];
+        store = newItemStack;
     }
 
     public static FCInventory at(FCInventory inventory){

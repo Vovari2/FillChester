@@ -144,6 +144,56 @@ public class FCCommands extends BaseCommand {
     }
 
 
+    @Subcommand("edit size")
+    @CommandCompletion("@nothing")
+    public void edit_size(Player player, int size){
+        Block block = player.getTargetBlock(null, 10);
+        // Проверка, является ли блок контейнером
+        if (!FC.materialContainers.contains(block.getType())){
+            TextUtils.sendPlayerErrorMessage(player, "Чтобы изменить количество слотов хранилища, нужно навестить на сундук или бочку!");
+            return;
+        }
+
+        FCChest chest = FC.getChest(FCPoint.adapt(block.getLocation()));
+        // Проверка, является ли блок сундуком плагина
+        if (chest == null){
+            TextUtils.sendPlayerErrorMessage(player, "Блок не является сундуком, созданным плагином FillChester!");
+            return;
+        }
+
+        if (!FC.amountSlots.contains(size)){
+            TextUtils.sendPlayerErrorMessage(player, "Нельзя задавать такое количество слотов!\n Можно указывать только: 9, 18, 27, 36, 45 и 54");
+            return;
+        }
+
+        chest.editSizeAllInventories(size);
+        TextUtils.sendPlayerMessage(player, "<green>Количество слотов изменено\n");
+    }
+    @Subcommand("edit size")
+    @CommandCompletion("@nothing")
+    public void edit_size(Player player, int number, int size){
+        FCChest chest = FC.getChest(number - 1);
+        // Проверка, является ли блок контейнером
+        if (chest == null){
+            TextUtils.sendPlayerErrorMessage(player, "Хранилища с таким номером не существует!");
+            return;
+        }
+
+        if (!chest.isWork) {
+            TextUtils.sendPlayerErrorMessage(player, "Хранилище с таким номером выключено!");
+            return;
+        }
+
+        if (!FC.amountSlots.contains(size)){
+            TextUtils.sendPlayerErrorMessage(player, "Нельзя задавать такое количество слотов!\n Можно указывать только: 9, 18, 27, 36, 45 и 54");
+            return;
+        }
+
+        chest.editSizeAllInventories(size);
+        TextUtils.sendPlayerMessage(player, "<green>Количество слотов изменено\n");
+    }
+
+
     @Subcommand("tp")
     @CommandCompletion("@nothing")
     public void teleport(Player player, int number){
@@ -342,14 +392,16 @@ public class FCCommands extends BaseCommand {
     public void help(Player player){
         TextUtils.sendPlayerMessage(player, """
                         <#0075ff>П<#007cff>о<#0083ff>м<#008aff>о<#0091fe>щ<#0098fe>ь <#009ffe>п<#00a6fe>о <#00adfe>п<#00b4fe>л<#00bbfe>а<#00c2fd>г<#00c9fd>и<#00d0fd>н<#00d7fd>у (/fc help): 
-                         <hover:show_text:'<gray>Создает новое хранилище с заданным количеством слотов и названием хранилища (нужно навестить на сундук, бочку или двойной сундук)'><#EF6400>/fc create</hover> <#f48a00>[Кол-во слотов*] <#f8af00>[Название хранилища*]
-                         <hover:show_text:'<gray>Показывает список хранилищ определенной страницы (по умолчанию страница 1)'><#EF6400>/fc list</hover> <#f48a00>[Страница]
-                         <hover:show_text:'<gray>Телепортирует игрока к хранилищу с указанным номером'><#EF6400>/fc tp</hover> <#f48a00>[Номер хранилища*]
-                         <hover:show_text:'<gray>Открывает инвентарь по умолчанию по номеру хранилища или если навестить на хранилище'><#EF6400>/fc edit</hover> <#f48a00>[Номер хранилища]
-                         <hover:show_text:'<gray>Открывает инвентарь игрока по номеру и нику игрока'><#EF6400>/fc open</hover> <#f48a00>[Номер хранилища*] <#f8af00>[Ник игрока]
-                         <hover:show_text:'<gray>Удаляет хранилище по номеру или если навестись на него'><#EF6400>/fc delete</hover> <#f48a00>[Номер хранилища]
-                         <hover:show_text:'<gray>Очищает инвентари игроков в хранилище по номеру или если навестись на него'><#EF6400>/fc clear</hover> <#f48a00>[Номер хранилища]
-                         <hover:show_text:'<gray>Показывает информацию о хранилище по номеру или если навестись на него'><#EF6400>/fc info</hover> <#f48a00>[Номер хранилища]
+                         <hover:show_text:'<gray>Создать хранилище при наведении'><#EF6400>/fc create</hover> <#f48a00>[Кол-во слотов*] <#f8af00>[Название хранилища*]
+                         <hover:show_text:'<gray>Показать список хранилищ'><#EF6400>/fc list</hover> <#f48a00>[Страница]
+                         <hover:show_text:'<gray>Телепортирует игрока к хранилищу'><#EF6400>/fc tp</hover> <#f48a00>[Номер хранилища*]
+                         <hover:show_text:'<gray>Изменяет инвентарь хранилища при наведении'><#EF6400>/fc edit</hover> <#f48a00>[Номер хранилища]
+                         <hover:show_text:'<gray>Изменяет название хранилища при наведении'><#EF6400>/fc edit title</hover> <#f48a00>[Номер хранилища] [Новое название*]
+                         <hover:show_text:'<gray>Изменяет размер хранилища при наведении'><#EF6400>/fc edit size</hover> <#f48a00>[Номер хранилища] [Новое кол. слотов*]
+                         <hover:show_text:'<gray>Открывает инвентарь хранилища у игрока'><#EF6400>/fc open</hover> <#f48a00>[Номер хранилища*] <#f8af00>[Ник игрока]
+                         <hover:show_text:'<gray>Удаляет хранилище  при наведении'><#EF6400>/fc delete</hover> <#f48a00>[Номер хранилища]
+                         <hover:show_text:'<gray>Очищает инвентарь хранилища у игрока при наведении'><#EF6400>/fc clear</hover> <#f48a00>[Номер хранилища]
+                         <hover:show_text:'<gray>Показывает информацию о хранилище при наведении'><#EF6400>/fc info</hover> <#f48a00>[Номер хранилища]
                          
                          <hover:show_text:'<gray>Команды ниже следует использовать только, если вы на 100% знаете, как они работают'><#EF6400><red>Предупреждение!</red></hover>  
                          <hover:show_text:'<gray>Загружает все хранилища из файла на сервер'><#EF6400>/fc load</hover>
@@ -358,10 +410,4 @@ public class FCCommands extends BaseCommand {
                         """
                 );
     }
-
-    @CatchUnknown
-    public void unknown(){
-        FC.getInstance().getLogger().info("Work4!");
-    }
-
 }

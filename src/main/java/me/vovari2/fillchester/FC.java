@@ -65,17 +65,18 @@ public final class FC extends JavaPlugin {
     }
 
     public static boolean isListPage(int page) {
-        return page <= 0 || stores.size() < (page - 1) * 10 + 1;
+        return page <= 0 || stores.size() < (page - 1) * 8 + 1;
     }
     public static void getListInventory(Player player, int page){
-        String text = "<#0075ff>С<#007dff>п<#0084ff>и<#008cff>с<#0093fe>о<#009bfe>к <#00a2fe>х<#00aafe>р<#00b2fe>а<#00b9fe>н<#00c1fe>и<#00c8fd>л<#00d0fd>и<#00d7fd>щ <#00dffd>- <#0075ff>С<#007cff>т<#0082ff>р<#0089fe>а<#0090fe>н<#0096fe>и<#009dfe>ц<#00a4fd>а <#00aafd>" + page + "<#00b1fd>:\n";
+        String text = "<#0075ff>С<#007dff>п<#0084ff>и<#008cff>с<#0093fe>о<#009bfe>к <#00a2fe>х<#00aafe>р<#00b2fe>а<#00b9fe>н<#00c1fe>и<#00c8fd>л<#00d0fd>и<#00d7fd>щ:\n";
 
-        int chestOnPage = page * 10;
-        for (int i = (page-1) * 10; i < chestOnPage && i < stores.size(); i++){
+        int chestOnPage = page * 8;
+        for (int i = (page-1) * 8; i < chestOnPage && i < stores.size(); i++){
             FCChest chest = stores.get(i);
             FCPoint point = chest.getPoints().get(0);
-            text += "<#00B1FD> " + (i+1) + ". <#EF6400>[" + chest.getStoreType().getTitle() + "] <#f48a00>\"" + chest.getTitle() + "\" <#f8af00>" + point.getX() + " " + point.getY() + " " + point.getZ() + " <#fdd500>" + TextUtils.getButtonTP(i+1) + " " + TextUtils.getButtonEdit(i+1) + " " + TextUtils.getButtonOpen(i+1, player.getName()) + "\n";
+            text += "<#00B1FD> " + (i+1) + ". <#EF6400>[" + chest.getStoreType().getTitle() + "] <#f48a00>" + point.getX() + " " + point.getY() + " " + point.getZ() + " <#f8af00>" + TextUtils.getButtonTP(i+1) + " " + TextUtils.getButtonEdit(i+1) + " " + TextUtils.getButtonDelete(i+1) + " " + TextUtils.getButtonInfo(i+1) + "\n";
         }
+        text += "<#00aafe>" + TextUtils.getButtonLastPage(page) + "   <#00B1FD>" + page + "   <#00aafe>" + TextUtils.getButtonNextPage(page);
         TextUtils.sendPlayerMessage(player, text);
     }
 
